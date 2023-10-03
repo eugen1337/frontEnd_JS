@@ -1,22 +1,36 @@
-export async function calc() {
+export async function calc(a, b) {
     console.log("fetch /calc");
 
-    const result = await getResponse("http://localhost:8001/calc?a=30&b=40", {
+    const result = await getResponse(`http://localhost:8001/calc?a=${a}&b=${b}`, {
         method: "GET",
     });
 
     console.log(result);
+    return result;
 }
 
-// export async function handleTask() {
-//     console.log("fetch /calc");
+export async function makeTask(params)
+{
+    const result = await getResponse(`http://localhost:8001/tasks`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(params),
+    });
 
-//     const result = await getResponse("http://localhost:8001/calc?a=30&b=40", {
-//         method: "GET",
-//     });
+    return result;
+}
 
-//     console.log(result);
-// }
+export async function getTasks(username)
+{
+    const result = await getResponse(`http://localhost:8001/tasks?username=${username}`, {
+        method: "GET",
+    });
+
+    return result;
+}
+
 
 export async function getResponse(url, params) {
     console.log(url);

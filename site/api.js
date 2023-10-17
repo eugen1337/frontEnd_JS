@@ -1,7 +1,8 @@
+const baseUrl = "http://localhost:80/api/v1";
 export async function calc(a, b) {
     console.log("fetch /calc");
 
-    const result = await getResponse(`http://localhost:8001/calc?a=${a}&b=${b}`, {
+    const result = await getResponse(`${baseUrl}/calc?a=${a}&b=${b}`, {
         method: "GET",
     });
 
@@ -9,9 +10,9 @@ export async function calc(a, b) {
     return result;
 }
 
-export async function makeTask(params)
+export async function createTask(params)
 {
-    const result = await getResponse(`http://localhost:8001/tasks`, {
+    const result = await getResponse(`${baseUrl}/tasks`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -24,7 +25,7 @@ export async function makeTask(params)
 
 export async function getTasks(username)
 {
-    const result = await getResponse(`http://localhost:8001/tasks?username=${username}`, {
+    const result = await getResponse(`${baseUrl}/tasks?login=${username}`, {
         method: "GET",
     });
 
@@ -45,4 +46,17 @@ export async function getResponse(url, params) {
     } else {
         console.log("Ошибка HTTP: " + response.status);
     }
+}
+
+export async function deleteTask(params)
+{
+    const result = await getResponse(`${baseUrl}/tasks/delete`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(params),
+    });
+
+    return result;
 }

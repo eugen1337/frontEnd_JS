@@ -1,4 +1,4 @@
-const baseUrl = "http://localhost:8001";
+const baseUrl = "http://localhost:80/api/v1";
 let username;
 
 window.onload = () => {
@@ -22,7 +22,7 @@ async function register() {
 
     let url = baseUrl + `/login`;
 
-    let date = username + "&" + password;
+    let data = { login: login, password: password };
 
     const result = await (
         await import("./api.js")
@@ -31,7 +31,7 @@ async function register() {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(date),
+        body: JSON.stringify(data),
     });
 
     console.log(result);
@@ -53,9 +53,11 @@ async function login() {
 
     console.log(result);
 
-    if (result === "ok") {
+    if (result == "ok") {
         await loadMainPage();
-    } else console.log("login is error");
+    } else {
+        console.log("login is error");
+    }
 }
 
 async function loadMainPage() {
@@ -71,6 +73,11 @@ async function loadMainPage() {
     addBtn.setAttribute("id", "add_but");
     addBtn.setAttribute("value", "Добавить задачу");
 
+    let getBtn = document.createElement("input");
+    getBtn.setAttribute("type", "button");
+    getBtn.setAttribute("id", "get_but");
+    getBtn.setAttribute("value", "Получить задачи");
+
     let value1 = document.createElement("input");
     value1.setAttribute("type", "text");
     value1.setAttribute("id", "value1");
@@ -81,6 +88,7 @@ async function loadMainPage() {
     value2.setAttribute("id", "value2");
     value2.setAttribute("placeholder", "b");
 
+    form.appendChild(getBtn);
     form.appendChild(addBtn);
     form.appendChild(value1);
     form.appendChild(value2);
@@ -98,8 +106,10 @@ async function loadMainPage() {
     if (showTasks(username)) console.log("tasks is exist");
 
     document.getElementById("add_but").onclick = () => {
-        makeTask(table);
+        createTask(table);
     };
+
+    getBtn.addEventListener("click", () => showTasks(table));
 }
 
 function showTasksHeader(table) {
@@ -117,51 +127,76 @@ function showTasksHeader(table) {
 }
 
 async function showTasks(table) {
-    const tasks = await (await import("./api.js")).getTasks(username);
+    const tasksStr = await (await import("./api.js")).getTasks(username);
+    console.log(tasksStr);
+    console.log(table);
 
+    const tasks = JSON.parse(tasksStr);
     if (tasks == "null") return false;
 
-    Array.from(table.rows).forEach((row) => {
-        if (row.getAttribute("id") != "tasks-header") row.remove();
-    });
+    for (i in tasks["docs"]) {
+        val = tasks["docs"][i];
+        let id = val["id"]
 
-    if (taskStr != "EMPTY") {
-        const tasks = JSON.parse(taskStr);
+        console.log(val);
+        let tr = document.createElement("tr");
+        const table = document.getElementById("tasks");
+        
+        tr.setAttribute("id", "task" + id);
+        for (i in val) {
+            let td = document.createElement("td");
+            td.setAttribute("id", i + id);
+            console.log(i + id)
+            td.innerHTML = val[i];
+            tr.appendChild(td);
+        }
+        
+        let a = val["value1"]
+        let b = val["value2"]
 
-        tasks.forEach((task) => {
-            let tr = document.createElement("tr");
-            task.forEach((taskElem) => {
-                let td = document.createElement("td");
-                td.innerHTML = taskElem;
-                tr.appendChild(td);
-            });
-            table.appendChild(tr);
+        let td = document.createElement("td");
+
+        const div = document.createElement("div");
+        div.setAttribute("class", "action-box");
+
+        const but = document.createElement("input");
+        but.setAttribute("type", "button");
+        but.setAttribute("class", "task-action");
+        but.setAttribute("value", "delete");
+
+        but.addEventListener("click", async () => {
+            let params = {
+                text: id,
+            };
+            const res = await (await import("./api.js")).deleteTask(params);
+            console.log(res);
+            document.getElementById("task" + id).innerHTML = "";
         });
-    }
 
-    initControlButton(table);
+        div.appendChild(but);
+
+        td.appendChild(div);
+        tr.appendChild(td);
+
+        td.appendChild(createTaskAction("result", a, b, id));
+        tr.appendChild(td);
+
+        table.appendChild(tr);
+    }
 }
 
-async function makeTask(table) {
+async function createTask(table) {
     let url = baseUrl + "/tasks";
 
     const a = document.getElementById("value1").value;
     const b = document.getElementById("value2").value;
 
-    // let name = prompt("name of task");
-    // console.log(JSON.stringify(name));
-
-    let params = username + "&" + a + "&" + b;
-    const id = await (await import("./api.js")).makeTask(params);
-
-    // if (result !== "ok") {
-    //     console.log("no task resp");
-    //     return "pupupu";
-    // }
-
+    let params = { login: username, value1: a, value2: b };
+    const id = await (await import("./api.js")).createTask(params);
     console.log(id);
 
     let tr = document.createElement("tr");
+    tr.setAttribute("id", "task" + id);
 
     let td_id = document.createElement("td");
     td_id.innerHTML = id;
@@ -190,15 +225,31 @@ async function makeTask(table) {
 
     let td = document.createElement("td");
 
-    const actions = ["result", "delete"];
+    const div = document.createElement("div");
+    div.setAttribute("class", "action-box");
 
-    td.appendChild(makeTaskAction(actions[0], a, b, id));
-    tr.setAttribute("id", id);
+    const but = document.createElement("input");
+    but.setAttribute("type", "button");
+    but.setAttribute("class", "task-action");
+    but.setAttribute("value", "delete");
+
+    but.addEventListener("click", async () => {
+        let params = {
+            text: id,
+        };
+        const res = await (await import("./api.js")).deleteTask(params);
+        console.log(res);
+        document.getElementById("task" + id).innerHTML = "";
+    });
+
+    div.appendChild(but);
+
+    td.appendChild(div);
     tr.appendChild(td);
 
-    // for (action of actions) {
-    //     form.appendChild(makeTaskAction(action));
-    // }
+    td.appendChild(createTaskAction("result", a, b, id));
+    tr.appendChild(td);
+
     table.appendChild(tr);
 
     wrapper.appendChild(form);
@@ -206,7 +257,7 @@ async function makeTask(table) {
     table.appendChild(wrapper);
 }
 
-function makeTaskAction(actionName, a, b, id) {
+function createTaskAction(actionName, a, b, id) {
     const div = document.createElement("div");
     div.setAttribute("class", "action-box");
 

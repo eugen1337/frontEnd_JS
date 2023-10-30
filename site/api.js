@@ -1,4 +1,33 @@
 const baseUrl = "http://localhost:80/api/v1";
+
+export async function login(username, password) {
+    console.log("fetch /login");
+
+    const result = await getResponse(`${baseUrl}/login?login=${username}&password=${password}`, {
+        method: "GET",
+    });
+
+    console.log(result);
+    return result;
+}
+
+export async function register(username, password) {
+
+    console.log("fetch /register");
+    let data = { login: username, password: password };
+
+    const result = await getResponse(`${baseUrl}/login`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    });
+
+    console.log(result);
+    return result;
+}
+
 export async function calc(a, b) {
     console.log("fetch /calc");
 

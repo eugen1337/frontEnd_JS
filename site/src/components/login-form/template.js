@@ -9,10 +9,10 @@ export default function(vm) {
         <div class="input-box">
             <input id="password" type="password" placeholder="password" required>
         </div>
-        <div class="login-box">
+        <div class="but-box">
             <input id="login-btn" type="button" value="login">
         </div>
-        <div class="register-box">
+        <div class="but-box">
             <input id="register-btn" type="button" value="register">
         </div>
         </form>

@@ -1,17 +1,20 @@
-// const baseUrl = "http://localhost:80/api/v1";
-// let username;
-import Router from './router.js';
-
-// console.log("hello")
+import Router from "./router.js";
+import "./pages/login-page/component.js";
+import "./pages/tasks-page/component.js";
 
 (async () => {
     const router = new Router();
-    
-    router.addPage('login' , 'login-page');
-    // router.addPage('tasks', 'task-page');
-    await router.showPage('default');
 
+    router.setStartPage(document.createElement("login-page"));
+
+    router.addPage("login", document.createElement("login-page"));
+    router.addPage("tasks", document.createElement("tasks-page"));
+
+    await router.showPage("start");
 })();
+
+// const baseUrl = "http://localhost:80/api/v1";
+// let username;
 
 // window.onload = () => {
 //     document.addEventListener("keydown", (event) => {
@@ -114,7 +117,6 @@ import Router from './router.js';
 
 //     showTasksHeader(table);
 
-//     // showTasks()
 //     if (showTasks(username)) console.log("tasks is exist");
 
 //     document.getElementById("add_but").onclick = () => {
@@ -153,7 +155,7 @@ import Router from './router.js';
 //         console.log(val);
 //         let tr = document.createElement("tr");
 //         const table = document.getElementById("tasks");
-        
+
 //         tr.setAttribute("id", "task" + id);
 //         for (i in val) {
 //             let td = document.createElement("td");
@@ -162,7 +164,7 @@ import Router from './router.js';
 //             td.innerHTML = val[i];
 //             tr.appendChild(td);
 //         }
-        
+
 //         let a = val["value1"]
 //         let b = val["value2"]
 

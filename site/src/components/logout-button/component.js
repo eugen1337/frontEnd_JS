@@ -36,4 +36,4 @@ class PageSlider extends HTMLElement {
     }
 }
 
-customElements.define('page-slider', PageSlider);
+customElements.define('logout-button', PageSlider);

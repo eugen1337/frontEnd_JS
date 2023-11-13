@@ -1,5 +1,3 @@
-import Router from './router.js'
-
 export default class StateManager {
     static instance = null;
 
@@ -15,7 +13,7 @@ export default class StateManager {
         this.methods = {
             tasks: {
                 name: 'getTasks',
-                params: ['username', 'logged']
+                params: ['username']
             },
             login: {
                 name: 'login',
@@ -25,17 +23,15 @@ export default class StateManager {
                 name: 'startCalculation',
                 params: ['logged', 'username', 'id']
             },
-            create: {
+            id: {
                 name: 'createTask',
-                params: ['logged', 'username', 'value1', 'value2']
+                params: ['username', 'value1', 'value2']
             },
             delete: {
                 name: 'deleteTask',
                 params: ['logged', 'username', 'id']
             }
         };
-
-        this.router = new Router();
 
         if (!StateManager.instance) StateManager.instance = this;
         else return StateManager.instance;
@@ -73,8 +69,8 @@ export default class StateManager {
         const methodName = this.methods[queryType].name;
         const paramNames = this.methods[queryType].params;
         const params = this.getStates(paramNames);
-
-        const queryResult = await (await import('../transport/transport.js'))[methodName](params);
+        const queryResult = await (await import('./api.js'))[methodName](params);
+        console.log(queryResult)
         this.updateState(queryType, queryResult);
     }
     
@@ -88,17 +84,14 @@ export default class StateManager {
         this.updateState("login", queryResult);
     }
 
-
-
     getState(stateName) {
         switch (stateName) {
             case 'username':
                 return this.states.login.username;
             case 'passwd':
                 return this.states.login.passwd;
-            case 'logged':
-                return this.states.login.status === 'OK';
             case 'id':
+                console.log(this.states.tasks.id)
                 return this.states.tasks.id;
             case 'value1':
                 return this.states.tasks.value1;
@@ -132,14 +125,13 @@ export default class StateManager {
                 break;
             case 'value2':
                 this.states.tasks.value2 = newValue;
-                break;
-                
+                break; 
             case 'login':
                 this.states.login.status = newValue;
                 emitState = 'login';
                 break;
             case 'tasks':
-                this.states.tasks.list = newValue;
+                this.states.tasks.list = JSON.parse(newValue).docs;
                 this.states.tasks.status = this.states.tasks.list.length ? 'OK' : 'EMPTY';
                 emitState = 'tasks';
                 break;

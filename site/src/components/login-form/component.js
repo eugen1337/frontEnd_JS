@@ -1,6 +1,7 @@
 import template from './template.js'
 import Manager from '../../manager.js'
 import Router from '../../router.js'
+import style from './style.js'
 
 class LoginWindow extends HTMLElement {
     constructor() { 
@@ -33,7 +34,7 @@ class LoginWindow extends HTMLElement {
     attributeChangedCallback(attr, prev, next) {}
 
     render() {
-        this.shadow.innerHTML = template(this);
+        this.shadow.innerHTML = template(this) + style();
         this.initEvents();
     }
 
@@ -64,7 +65,7 @@ class LoginWindow extends HTMLElement {
     checkState(stateName, state) {
         switch(stateName) {
             case 'login':
-                if (state.status === 'OK') {
+                if (state.status === 'ok') {
                     this.username = state.username;
                     this.router.showPage('tasks');
                 }

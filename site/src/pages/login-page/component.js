@@ -1,5 +1,5 @@
 import template from './template.js'
-import '../../components/login-window/component.js'
+import '../../components/login-form/component.js'
 
 class LoginPage extends HTMLElement {
     constructor() { 

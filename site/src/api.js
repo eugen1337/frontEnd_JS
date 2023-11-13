@@ -39,8 +39,9 @@ export async function calc(a, b) {
     return result;
 }
 
-export async function createTask(params)
+export async function createTask({username, value1, value2})
 {
+    const params = {login: username, value1: value1, value2: value2}
     const result = await getResponse(`${baseUrl}/tasks`, {
         method: "POST",
         headers: {
@@ -52,7 +53,7 @@ export async function createTask(params)
     return result;
 }
 
-export async function getTasks(username)
+export async function getTasks({username})
 {
     const result = await getResponse(`${baseUrl}/tasks?login=${username}`, {
         method: "GET",

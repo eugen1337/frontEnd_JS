@@ -15,6 +15,16 @@ class TaskTable extends HTMLElement {
     async connectedCallback() {
         this.renderHeader();
 
+        this.shadow
+            .getElementById("update-btn")
+            .addEventListener("click", () => {
+                this.manager.query("tasks");
+            });
+
+        this.shadow.getElementById("add-btn").addEventListener("click", () => {
+            this.createTask();
+        });
+
         this.subscriptions.push(
             await this.manager.subscribe(
                 "tasks",
@@ -144,13 +154,49 @@ class TaskTable extends HTMLElement {
             "wait",
         ];
         let tr = document.createElement("tr");
+        tr.setAttribute("id", `task${this.manager.getState("id")}`);
 
         for (let i in keys) {
             let td = document.createElement("td");
             td.innerHTML = data[i];
-            td.setAttribute("id", `${keys[i]}-${data[0]}`);
+            td.setAttribute("id", keys[i] + data[0]);
             tr.appendChild(td);
         }
+
+        const but = document.createElement("input");
+            but.setAttribute("type", "button");
+            but.setAttribute("class", "task-action");
+            but.setAttribute("value", "delete");
+        but.addEventListener("click", async () => {
+            let params = {
+                text: this.manager.getState("id"),
+            };
+            const res = await (
+                await import("../../api.js")
+            ).deleteTask(params);
+            console.log(res);
+            this.shadow.getElementById("task" + this.manager.getState("id")).innerHTML = "";
+        });
+        tr.appendChild(but);
+
+        const resBut = document.createElement("input");
+        resBut.setAttribute("type", "button");
+        resBut.setAttribute("class", "task-action");
+        resBut.setAttribute("value", "result");
+
+        const val1 = this.manager.getState("value1")
+        const val2 = this.manager.getState("value2")
+
+        resBut.addEventListener("click", async () => {
+            const calcResult = await (
+                await import("../../api.js")
+            ).calc(val1, val2);
+            let res = this.shadow.getElementById("result" + this.manager.getState("id"));
+            res.innerHTML = calcResult;
+            let status = this.shadow.getElementById("status" + this.manager.getState("id"));
+            status.innerHTML = "ready";
+        });
+        tr.appendChild(resBut);
 
         table.appendChild(tr);
     }

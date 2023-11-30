@@ -1,4 +1,4 @@
-const baseUrl = "http://localhost:80/api/v1";
+const baseUrl = "http://localhost:8080/mvn-start/api/v1";
 
 export async function login(username, password) {
     console.log("fetch /login");
@@ -12,7 +12,6 @@ export async function login(username, password) {
 }
 
 export async function register(username, password) {
-
     console.log("fetch /register");
     let data = { login: username, password: password };
 
@@ -64,10 +63,7 @@ export async function getTasks({username})
 
 
 export async function getResponse(url, params) {
-    console.log(url);
-
     let response = await fetch(url, params);
-    console.log(response);
 
     let text;
     if (response.ok) {

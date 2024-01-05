@@ -1,4 +1,4 @@
-const baseUrl = "http://localhost:8080/mvn-start/api/v1";
+const baseUrl = "http://localhost:8080/my-app-1.0/v1";
 
 export async function login(username, password) {
     console.log("fetch /login");
@@ -38,10 +38,9 @@ export async function calc(a, b) {
     return result;
 }
 
-export async function createTask({username, value1, value2})
-{
-    const params = {login: username, value1: value1, value2: value2}
-    const result = await getResponse(`${baseUrl}/tasks`, {
+export async function createTask({ username, value1, value2 }) {
+    const params = { login: username, value1: value1, value2: value2 }
+    const result = await getResponse(`${baseUrl}/tasks/create`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -52,8 +51,7 @@ export async function createTask({username, value1, value2})
     return result;
 }
 
-export async function getTasks({username})
-{
+export async function getTasks({ username }) {
     const result = await getResponse(`${baseUrl}/tasks?login=${username}`, {
         method: "GET",
     });
@@ -74,8 +72,7 @@ export async function getResponse(url, params) {
     }
 }
 
-export async function deleteTask(params)
-{
+export async function deleteTask(params) {
     const result = await getResponse(`${baseUrl}/tasks/delete`, {
         method: "POST",
         headers: {

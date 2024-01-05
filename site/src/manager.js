@@ -5,32 +5,34 @@ export default class StateManager {
         this.subscribers = {};
         this.states = {
             login: {
-                status: 'BAD'
+                status: "BAD",
             },
             tasks: {},
-            calculation: {}
+            calculation: {},
+            username: "",
+            passwd: "",
         };
         this.methods = {
             tasks: {
-                name: 'getTasks',
-                params: ['username']
+                name: "getTasks",
+                params: ["username"],
             },
             login: {
-                name: 'login',
-                params: ['username', 'password']
+                name: "login",
+                params: ["username", "password"],
             },
             calculation: {
-                name: 'startCalculation',
-                params: ['logged', 'username', 'id']
+                name: "startCalculation",
+                params: ["logged", "username", "id"],
             },
             id: {
-                name: 'createTask',
-                params: ['username', 'value1', 'value2']
+                name: "createTask",
+                params: ["username", "value1", "value2"],
             },
             delete: {
-                name: 'deleteTask',
-                params: ['logged', 'username', 'id']
-            }
+                name: "deleteTask",
+                params: ["logged", "username", "id"],
+            },
         };
 
         if (!StateManager.instance) StateManager.instance = this;
@@ -40,11 +42,13 @@ export default class StateManager {
     emit(stateName) {
         const state = this.states[stateName];
         if (this.subscribers[stateName]) {
-            this.subscribers[stateName].forEach(callback => callback(stateName, state));
+            this.subscribers[stateName].forEach((callback) =>
+                callback(stateName, state)
+            );
         }
     }
 
-    async subscribe(stateName, callback, emit=false) {
+    async subscribe(stateName, callback, emit = false) {
         if (!this.subscribers[stateName]) this.subscribers[stateName] = [];
 
         this.subscribers[stateName].push(callback);
@@ -69,85 +73,98 @@ export default class StateManager {
         const methodName = this.methods[queryType].name;
         const paramNames = this.methods[queryType].params;
         const params = this.getStates(paramNames);
-        const queryResult = await (await import('./api.js'))[methodName](params);
-        console.log(queryResult)
+        const queryResult = await (
+            await
+            import ("./api.js")
+        )[methodName](params);
+        console.log(queryResult);
         this.updateState(queryType, queryResult);
     }
-    
+
     async login(username, password) {
-        const queryResult = await (await import("./api.js")).login(username, password);
+        const queryResult = await (
+            await
+            import ("./api.js")
+        ).login(username, password);
         this.updateState("login", queryResult);
     }
 
     async register(username, password) {
-        const queryResult = await (await import("./api.js")).register(username, password);
+        const queryResult = await (
+            await
+            import ("./api.js")
+        ).register(username, password);
         this.updateState("login", queryResult);
     }
 
     getState(stateName) {
         switch (stateName) {
-            case 'username':
+            case "username":
                 return this.states.login.username;
-            case 'passwd':
+            case "passwd":
                 return this.states.login.passwd;
-            case 'id':
-                console.log(this.states.tasks.id)
+            case "id":
+                console.log(this.states.tasks.id);
                 return this.states.tasks.id;
-            case 'value1':
+            case "value1":
                 return this.states.tasks.value1;
-            case 'value2':
+            case "value2":
                 return this.states.tasks.value2;
         }
     }
 
     getStates(stateNames) {
         let states = {};
-        stateNames.forEach(stateName => {
+        stateNames.forEach((stateName) => {
             states[stateName] = this.getState(stateName);
         });
         return states;
     }
 
     updateState(stateName, newValue) {
-        let emitState = '';
+        let emitState = "";
         switch (stateName) {
-            case 'username':
+            case "username":
                 this.states.login.username = newValue;
                 break;
-            case 'passwd':
+            case "passwd":
                 this.states.login.passwd = newValue;
                 break;
-            case 'id':
+            case "id":
                 this.states.tasks.id = newValue;
                 break;
-            case 'value1':
+            case "value1":
                 this.states.tasks.value1 = newValue;
                 break;
-            case 'value2':
+            case "value2":
                 this.states.tasks.value2 = newValue;
-                break; 
-            case 'login':
+                break;
+            case "login":
                 this.states.login.status = newValue;
-                emitState = 'login';
+                emitState = "login";
                 break;
-            case 'tasks':
+            case "tasks":
+                if (newValue == "") {
+                    this.states.tasks.status = "EMPTY";
+                    break;
+                }
                 this.states.tasks.list = JSON.parse(newValue).docs;
-                this.states.tasks.status = this.states.tasks.list.length ? 'OK' : 'EMPTY';
-                emitState = 'tasks';
+                this.states.tasks.status = "OK";
+                emitState = "tasks";
                 break;
-            case 'calculation':
+            case "calculation":
                 this.states.calculation.status = newValue;
-                emitState = 'calculation';
-                this.query('tasks');
+                emitState = "calculation";
+                this.query("tasks");
                 break;
-            case 'delete':
-                this.query('tasks');
+            case "delete":
+                this.query("tasks");
                 break;
-            case 'create':
-                this.query('tasks');
+            case "create":
+                this.query("tasks");
                 break;
         }
 
-        if (emitState !== '') this.emit(emitState);
+        if (emitState !== "") this.emit(emitState);
     }
 }

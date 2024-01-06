@@ -29,7 +29,6 @@ class TaskTable extends HTMLElement {
             await this.manager.subscribe(
                 "tasks",
                 this.checkState.bind(this)
-                // true
             )
         );
         this.subscriptions.push(
@@ -79,6 +78,7 @@ class TaskTable extends HTMLElement {
                 row.remove();
             }
         );
+        console.log(this.tasks)
 
         this.tasks.forEach((task) => {
             const id = task["id"];
@@ -99,14 +99,9 @@ class TaskTable extends HTMLElement {
             but.setAttribute("class", "task-action");
             but.setAttribute("value", "delete");
 
-            but.addEventListener("click", async () => {
-                let params = {
-                    text: task["id"],
-                };
-                const res = await (
-                    await import("../../api.js")
-                ).deleteTask(params);
-                console.log(res);
+            but.addEventListener("click", async() => {
+                this.manager.updateState("id", task["id"])
+                this.manager.query("delete");
                 this.shadow.getElementById("task" + task["id"]).innerHTML = "";
             });
             tr.appendChild(but);
@@ -116,15 +111,11 @@ class TaskTable extends HTMLElement {
             resBut.setAttribute("class", "task-action");
             resBut.setAttribute("value", "result");
 
-            const val1 = task["value1"]
-            const val2 = task["value2"]
+            resBut.addEventListener("click", async() => {
+                this.manager.query("calculation");
 
-            resBut.addEventListener("click", async () => {
-                const calcResult = await (
-                    await import("../../api.js")
-                ).calc(val1, val2);
                 let res = this.shadow.getElementById("result" + id);
-                res.innerHTML = calcResult;
+                res.innerHTML = this.manager.getState("calculation");
                 let status = this.shadow.getElementById("status" + id);
                 status.innerHTML = "ready";
             });
@@ -143,7 +134,7 @@ class TaskTable extends HTMLElement {
 
         this.manager.updateState("value1", value1);
         this.manager.updateState("value2", value2);
-        await this.manager.query("id");
+        await this.manager.query("create");
 
         const keys = ["id", "value1", "value2", "result", "status"];
         const data = [
@@ -164,18 +155,13 @@ class TaskTable extends HTMLElement {
         }
 
         const but = document.createElement("input");
-            but.setAttribute("type", "button");
-            but.setAttribute("class", "task-action");
-            but.setAttribute("value", "delete");
-        but.addEventListener("click", async () => {
-            let params = {
-                text: this.manager.getState("id"),
-            };
-            const res = await (
-                await import("../../api.js")
-            ).deleteTask(params);
-            console.log(res);
-            this.shadow.getElementById("task" + this.manager.getState("id")).innerHTML = "";
+        but.setAttribute("type", "button");
+        but.setAttribute("class", "task-action");
+        but.setAttribute("value", "delete");
+        but.addEventListener("click", async() => {
+            this.manager.updateState("id", task["id"])
+            this.manager.query("delete");
+            this.shadow.getElementById("task" + task["id"]).innerHTML = "";
         });
         tr.appendChild(but);
 
@@ -184,16 +170,12 @@ class TaskTable extends HTMLElement {
         resBut.setAttribute("class", "task-action");
         resBut.setAttribute("value", "result");
 
-        const val1 = this.manager.getState("value1")
-        const val2 = this.manager.getState("value2")
+        resBut.addEventListener("click", async() => {
+            this.manager.query("calculation");
 
-        resBut.addEventListener("click", async () => {
-            const calcResult = await (
-                await import("../../api.js")
-            ).calc(val1, val2);
-            let res = this.shadow.getElementById("result" + this.manager.getState("id"));
-            res.innerHTML = calcResult;
-            let status = this.shadow.getElementById("status" + this.manager.getState("id"));
+            let res = this.shadow.getElementById("result" + id);
+            res.innerHTML = this.manager.getState("calculation");
+            let status = this.shadow.getElementById("status" + id);
             status.innerHTML = "ready";
         });
         tr.appendChild(resBut);

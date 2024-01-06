@@ -4,13 +4,13 @@ import Router from '../../router.js'
 import style from './style.js'
 
 class LoginWindow extends HTMLElement {
-    constructor() { 
+    constructor() {
         super();
-        this.shadow = this.attachShadow({mode: 'closed'});
+        this.shadow = this.attachShadow({ mode: 'closed' });
         this.subscriptions = [];
 
         this.username = '';
-        this.passwd = ''; 
+        this.passwd = '';
 
         this.manager = new Manager();
         this.router = new Router();
@@ -44,32 +44,31 @@ class LoginWindow extends HTMLElement {
             this.username = event.target.value;
             this.manager.updateState('username', this.username);
         });
-        
+
         let passwordField = this.shadow.getElementById('password');
         passwordField.addEventListener('change', event => {
             this.passwd = event.target.value;
-            this.manager.updateState('passwd', this.passwd);
+            this.manager.updateState('password', this.passwd);
         });
 
         let loginBtn = this.shadow.getElementById('login-btn');
         loginBtn.addEventListener('click', () => {
-            this.manager.login(this.username, this.passwd);
+            this.manager.query("login");
         });
 
         let registerBtn = this.shadow.getElementById('register-btn');
         registerBtn.addEventListener('click', () => {
-            this.manager.register(this.username, this.passwd);
+            this.manager.query("register");
         });
     }
 
     checkState(stateName, state) {
-        switch(stateName) {
+        switch (stateName) {
             case 'login':
-                if (state.status === 'ok') {
+                if (state.status === 'OK') {
                     this.username = state.username;
                     this.router.showPage('tasks');
-                }
-                else console.log('Неправильный логин и/или пароль!');
+                } else console.log('Неправильный логин и/или пароль!');
                 break;
         }
     }

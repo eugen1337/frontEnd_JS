@@ -26,10 +26,7 @@ class TaskTable extends HTMLElement {
         });
 
         this.subscriptions.push(
-            await this.manager.subscribe(
-                "tasks",
-                this.checkState.bind(this)
-            )
+            await this.manager.subscribe("tasks", this.checkState.bind(this))
         );
         this.subscriptions.push(
             await this.manager.subscribe(
@@ -78,7 +75,7 @@ class TaskTable extends HTMLElement {
                 row.remove();
             }
         );
-        console.log(this.tasks)
+        console.log(this.tasks);
 
         this.tasks.forEach((task) => {
             const id = task["id"];
@@ -99,8 +96,8 @@ class TaskTable extends HTMLElement {
             but.setAttribute("class", "task-action");
             but.setAttribute("value", "delete");
 
-            but.addEventListener("click", async() => {
-                this.manager.updateState("id", task["id"])
+            but.addEventListener("click", async () => {
+                this.manager.updateState("id", task["id"]);
                 this.manager.query("delete");
                 this.shadow.getElementById("task" + task["id"]).innerHTML = "";
             });
@@ -111,7 +108,10 @@ class TaskTable extends HTMLElement {
             resBut.setAttribute("class", "task-action");
             resBut.setAttribute("value", "result");
 
-            resBut.addEventListener("click", async() => {
+            resBut.addEventListener("click", async () => {
+                this.manager.updateState("id", task["id"]);
+                this.manager.updateState("value1", task["value1"]);
+                this.manager.updateState("value2", task["value2"]);
                 this.manager.query("calculation");
 
                 let res = this.shadow.getElementById("result" + id);
@@ -123,7 +123,6 @@ class TaskTable extends HTMLElement {
 
             table.appendChild(tr);
         });
-
     }
 
     async createTask() {
@@ -158,8 +157,8 @@ class TaskTable extends HTMLElement {
         but.setAttribute("type", "button");
         but.setAttribute("class", "task-action");
         but.setAttribute("value", "delete");
-        but.addEventListener("click", async() => {
-            this.manager.updateState("id", task["id"])
+        but.addEventListener("click", async () => {
+            this.manager.updateState("id", task["id"]);
             this.manager.query("delete");
             this.shadow.getElementById("task" + task["id"]).innerHTML = "";
         });
@@ -170,7 +169,10 @@ class TaskTable extends HTMLElement {
         resBut.setAttribute("class", "task-action");
         resBut.setAttribute("value", "result");
 
-        resBut.addEventListener("click", async() => {
+        resBut.addEventListener("click", async () => {
+            this.manager.updateState("id", task["id"]);
+            this.manager.updateState("value1", task["value1"]);
+            this.manager.updateState("value2", task["value2"]);
             this.manager.query("calculation");
 
             let res = this.shadow.getElementById("result" + id);

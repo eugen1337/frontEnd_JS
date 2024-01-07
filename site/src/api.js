@@ -3,9 +3,12 @@ const baseUrl = "http://localhost:8080/my-app-1.0/v1";
 export async function login({ username, password }) {
     console.log("fetch /login");
 
-    const result = await getResponse(`${baseUrl}/login?login=${username}&password=${password}`, {
-        method: "GET",
-    });
+    const result = await getResponse(
+        `${baseUrl}/login?login=${username}&password=${password}`,
+        {
+            method: "GET",
+        }
+    );
 
     console.log(result);
     return result;
@@ -27,27 +30,30 @@ export async function register({ username, password }) {
     return result;
 }
 
-export async function calc({ token, value1, value2 }) {
+export async function calc({ token, id, value1, value2 }) {
     console.log("fetch /calc");
 
-    const result = await getResponse(`${baseUrl}/calc?a=${value1}&b=${value2}`, {
-        method: "GET",
-        headers: {
-            'Authorization': `Bearer ${token}`
+    const result = await getResponse(
+        `${baseUrl}/calc?id=${id}&a=${value1}&b=${value2}`,
+        {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
         }
-    });
+    );
 
     console.log(result);
     return result;
 }
 
 export async function createTask({ token, username, value1, value2 }) {
-    const params = { login: username, value1: value1, value2: value2 }
+    const params = { login: username, value1: value1, value2: value2 };
     const result = await getResponse(`${baseUrl}/tasks`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            'Authorization': `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(params),
     });
@@ -59,13 +65,12 @@ export async function getTasks({ token }) {
     const result = await getResponse(`${baseUrl}/tasks`, {
         method: "GET",
         headers: {
-            'Authorization': `Bearer ${token}`
-        }
+            Authorization: `Bearer ${token}`,
+        },
     });
 
     return result;
 }
-
 
 export async function getResponse(url, params) {
     let response = await fetch(url, params);
@@ -83,7 +88,7 @@ export async function deleteTask({ token, id }) {
     const result = await getResponse(`${baseUrl}/tasks?id=${id}`, {
         method: "DELETE",
         headers: {
-            "Authorization": `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
         },
     });
 

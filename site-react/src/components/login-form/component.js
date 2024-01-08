@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import Manager from "../../new_manager.js";
+import Manager from "../../manager.js";
 import "./style.css";
 
 export default function LoginForm(props) {
@@ -15,10 +15,10 @@ export default function LoginForm(props) {
         manager.updateState("username", event.target.value);
     };
     const handlePasswd = (event) => {
-        manager.updateState("passwd", event.target.value);
+        manager.updateState("password", event.target.value);
     };
     const login = () => {
-        manager.login(username, passwd)
+        manager.query("login");
     };
 
     const checkState = (stateName, state) => {
@@ -32,7 +32,7 @@ export default function LoginForm(props) {
             case "username":
                 setUsername(state);
                 break;
-            case "passwd":
+            case "password":
                 setPasswd(state);
                 break;
         }
@@ -45,7 +45,7 @@ export default function LoginForm(props) {
         const subscribe = async () => {
             await manager.subscribe("login", checkState);
             await manager.subscribe("username", checkState);
-            await manager.subscribe("passwd", checkState);
+            await manager.subscribe("password", checkState);
         };
         subscribe();
         return unsubscribe;

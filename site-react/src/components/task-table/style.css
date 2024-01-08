@@ -7,3 +7,6 @@ table {
 input {
     margin: 5px;
 }
+div {
+    text-align: left;
+}

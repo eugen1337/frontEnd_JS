@@ -2,36 +2,41 @@ export default class StateManager {
     static instance = null;
 
     constructor() {
+        this.noquery = ["username", "password"];
         this.subscribers = {};
         this.states = {
             login: {
                 status: "BAD",
             },
             tasks: {},
-            calculation: {},
+            calculation: "",
             username: "",
-            passwd: "",
+            password: "",
         };
         this.methods = {
             tasks: {
                 name: "getTasks",
-                params: ["username"],
+                params: ["token"],
             },
             login: {
                 name: "login",
                 params: ["username", "password"],
             },
-            calculation: {
-                name: "startCalculation",
-                params: ["logged", "username", "id"],
+            register: {
+                name: "register",
+                params: ["username", "password"],
             },
-            id: {
+            calculation: {
+                name: "calc",
+                params: ["token", "id", "value1", "value2"],
+            },
+            create: {
                 name: "createTask",
-                params: ["username", "value1", "value2"],
+                params: ["token", "username", "value1", "value2"],
             },
             delete: {
                 name: "deleteTask",
-                params: ["logged", "username", "id"],
+                params: ["token", "id"],
             },
         };
 
@@ -51,8 +56,11 @@ export default class StateManager {
     async subscribe(stateName, callback, emit = false) {
         if (!this.subscribers[stateName]) this.subscribers[stateName] = [];
 
-        this.subscribers[stateName].push(callback);
-        if (emit) await this.query(stateName);
+        if (!this.subscribers[stateName].includes(callback)) {
+            this.subscribers[stateName].push(callback);
+        }
+        if (emit && !this.noquery.includes(stateName))
+            await this.query(stateName);
 
         return callback;
     }
@@ -73,40 +81,35 @@ export default class StateManager {
         const methodName = this.methods[queryType].name;
         const paramNames = this.methods[queryType].params;
         const params = this.getStates(paramNames);
+
         const queryResult = await (
             await import("./api.js")
         )[methodName](params);
+        
         console.log(queryResult);
         this.updateState(queryType, queryResult);
     }
 
-    async login(username, password) {
-        const queryResult = await (
-            await import("./api.js")
-        ).login(username, password);
-        this.updateState("login", queryResult);
-    }
-
-    async register(username, password) {
-        const queryResult = await (
-            await import("./api.js")
-        ).register(username, password);
-        this.updateState("login", queryResult);
-    }
-
     getState(stateName) {
         switch (stateName) {
+            case "token":
+                return this.states.login.token;
             case "username":
-                return this.states.login.username;
-            case "passwd":
-                return this.states.login.passwd;
+                return this.states.username;
+            case "password":
+                return this.states.password;
+            case "logged":
+                return this.states.login.status !== "BAD";
             case "id":
-                console.log(this.states.tasks.id);
                 return this.states.tasks.id;
             case "value1":
                 return this.states.tasks.value1;
             case "value2":
                 return this.states.tasks.value2;
+            case "tasks":
+                return this.states.tasks.list;
+            case "calc":
+                return this.states.calculation;
         }
     }
 
@@ -122,10 +125,12 @@ export default class StateManager {
         let emitState = "";
         switch (stateName) {
             case "username":
-                this.states.login.username = newValue;
+                this.states.username = newValue;
+                emitState = "username";
                 break;
-            case "passwd":
-                this.states.login.passwd = newValue;
+            case "password":
+                this.states.password = newValue;
+                emitState = "password";
                 break;
             case "id":
                 this.states.tasks.id = newValue;
@@ -136,19 +141,33 @@ export default class StateManager {
             case "value2":
                 this.states.tasks.value2 = newValue;
                 break;
+
             case "login":
-                this.states.login.status = newValue;
+                this.states.login.token = newValue;
+                this.states.login.status = this.states.login.token
+                    ? "OK"
+                    : "BAD";
+                emitState = "login";
+                break;
+            case "register":
+                this.states.login.token = newValue;
+                this.states.login.status = this.states.login.token
+                    ? "OK"
+                    : "BAD";
                 emitState = "login";
                 break;
             case "tasks":
-                this.states.tasks.list = JSON.parse(newValue).docs;
-                this.states.tasks.status = this.states.tasks.list.length
-                    ? "OK"
-                    : "EMPTY";
-                emitState = "tasks";
+                if (newValue === "EMPTY") {
+                    this.states.tasks.list = "";
+                    this.states.tasks.status = "EMPTY";
+                } else {
+                    this.states.tasks.list = JSON.parse(newValue).docs;
+                    this.states.tasks.status = "OK";
+                    emitState = "tasks";
+                }
                 break;
             case "calculation":
-                this.states.calculation.status = newValue;
+                this.states.calculation = newValue;
                 emitState = "calculation";
                 this.query("tasks");
                 break;
@@ -160,6 +179,8 @@ export default class StateManager {
                 break;
         }
 
-        if (emitState !== "") this.emit(emitState);
+        if (emitState !== "") {
+            this.emit(emitState);
+        }
     }
 }

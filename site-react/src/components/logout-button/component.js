@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import Manager from "../../state/new_manager.js";
+import Manager from "../../manager.js";
 import "./style.css";
 
 export default function LogoutButton(props) {
@@ -22,7 +22,7 @@ export default function LogoutButton(props) {
 
     return (
         <>
-            <div>
+            <div className="logout">
                 <span>user {username}</span>
                 <input
                     id="back-but"

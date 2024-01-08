@@ -114,10 +114,10 @@ class TaskTable extends HTMLElement {
                 this.manager.updateState("value2", task["value2"]);
                 this.manager.query("calculation");
 
-                let res = this.shadow.getElementById("result" + id);
-                res.innerHTML = this.manager.getState("calculation");
-                let status = this.shadow.getElementById("status" + id);
-                status.innerHTML = "ready";
+                // let res = this.shadow.getElementById("result" + id);
+                // res.innerHTML = this.manager.getState("calculation");
+                // let status = this.shadow.getElementById("status" + id);
+                // status.innerHTML = "ready";
             });
             tr.appendChild(resBut);
 

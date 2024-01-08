@@ -26,7 +26,6 @@ form .input-box input {
     height: 100%;
     width: 100%;
     outline: none;
-    padding: 0 15px;
     font-size: 17px;
     font-weight: 400;
     color: #333;
@@ -59,7 +58,13 @@ form h3 {
 .input-box.button input:hover {
     background: #0e4bf1;
 }
+
 .but-box {
     text-align: center;
     padding: 4px;
+}
+
+
+.login-btn input {
+    margin: 0px;
 }

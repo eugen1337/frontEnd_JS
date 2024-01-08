@@ -7,8 +7,8 @@ import "./style.css";
 export default function LoginForm(props) {
     const [username, setUsername] = useState("");
     const [passwd, setPasswd] = useState("");
-    const navigate = useNavigate();
 
+    const navigate = useNavigate();
     const manager = new Manager();
 
     const handleUsername = (event) => {
@@ -17,8 +17,13 @@ export default function LoginForm(props) {
     const handlePasswd = (event) => {
         manager.updateState("password", event.target.value);
     };
+
     const login = () => {
         manager.query("login");
+    };
+
+    const register = () => {
+        manager.query("register");
     };
 
     const checkState = (stateName, state) => {
@@ -37,6 +42,7 @@ export default function LoginForm(props) {
                 break;
         }
     };
+
     const unsubscribe = () => {
         for (let i = 0; i < 3; i++) manager.unsubscribe(checkState);
     };
@@ -89,6 +95,7 @@ export default function LoginForm(props) {
                             id="register-btn"
                             type="button"
                             value="register"
+                            onClick={register}
                         />
                     </div>
                 </form>

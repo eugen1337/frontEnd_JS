@@ -1,1 +1,7 @@
 /test
+.vscode/launch.json
+site/frontEnd_JS.code-workspace
+site/node_modules
+site/webpack.config.json
+site/dist/965.script.bundle.js
+site-react/node_modules 

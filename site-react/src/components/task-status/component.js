@@ -9,19 +9,9 @@ export default function TaskStatus(props) {
     const checkState = (stateName, state) => {
         const statusTemp = {
             count: state.list.length,
+            "not started": 0,
+            ready: 0,
         };
-
-        // this.status = {
-        //     count: this.tasks.length,
-        //     waiting: 0,
-        //     processing: 0,
-        //     processed: 0,
-        // };
-
-        // this.tasks.forEach((task) => {
-        //     const stat = task.status.toLowerCase();
-        //     this.status[stat]++;
-        // });
 
         switch (stateName) {
             case "tasks":
@@ -48,6 +38,8 @@ export default function TaskStatus(props) {
     return (
         <fieldset>
             <span>Количество задач: {status.count}</span>
+            <span>В ожидании: {status["not started"]}</span>
+            <span>Готовых: {status.ready}</span>
         </fieldset>
     );
 }

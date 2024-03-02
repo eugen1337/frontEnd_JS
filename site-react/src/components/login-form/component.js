@@ -1,26 +1,43 @@
-import { useState, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+import GlobalContext from "../../GlobalContext.js";
 
 import Manager from "../../manager.js";
 import "./style.css";
 
 export default function LoginForm(props) {
+<<<<<<< Updated upstream
     const [username, setUsername] = useState("");
     const [passwd, setPasswd] = useState("");
     const navigate = useNavigate();
 
+=======
+    const navigate = useNavigate();
+
+    let { login, setLogin } = useContext(GlobalContext);
+    let { password, setPassword } = useContext(GlobalContext);
+
+>>>>>>> Stashed changes
     const manager = new Manager();
 
-    const handleUsername = (event) => {
-        manager.updateState("username", event.target.value);
+    const handleLogin = (event) => {
+        setLogin(event.target.value);
     };
-    const handlePasswd = (event) => {
-        manager.updateState("password", event.target.value);
+    const handlePassword = (event) => {
+        setPassword(event.target.value);
     };
+<<<<<<< Updated upstream
     const login = () => {
-        manager.query("login");
-    };
+=======
 
+    const queryLogin = () => {
+        manager.updateState("username", login);
+        manager.updateState("password", password);
+>>>>>>> Stashed changes
+        manager.query("login");
+
+<<<<<<< Updated upstream
     const checkState = (stateName, state) => {
         switch (stateName) {
             case "login":
@@ -40,16 +57,22 @@ export default function LoginForm(props) {
     const unsubscribe = () => {
         for (let i = 0; i < 3; i++) manager.unsubscribe(checkState);
     };
+=======
+        if (manager.getState("logged")) {
+            navigate("/tasks");
+        }
+    };
 
-    useEffect(() => {
-        const subscribe = async () => {
-            await manager.subscribe("login", checkState);
-            await manager.subscribe("username", checkState);
-            await manager.subscribe("password", checkState);
-        };
-        subscribe();
-        return unsubscribe;
-    }, []);
+    const queryRegister = () => {
+        manager.updateState("username", login);
+        manager.updateState("password", password);
+        manager.query("register");
+>>>>>>> Stashed changes
+
+        if (manager.getState("logged")) {
+            navigate("/tasks");
+        }
+    };
 
     return (
         <>
@@ -61,8 +84,8 @@ export default function LoginForm(props) {
                             id="login"
                             type="text"
                             placeholder="login"
-                            value={username}
-                            onChange={handleUsername}
+                            value={login}
+                            onChange={handleLogin}
                             required
                         />
                     </div>
@@ -71,8 +94,8 @@ export default function LoginForm(props) {
                             id="password"
                             type="password"
                             placeholder="password"
-                            value={passwd}
-                            onChange={handlePasswd}
+                            value={password}
+                            onChange={handlePassword}
                             required
                         />
                     </div>
@@ -81,7 +104,7 @@ export default function LoginForm(props) {
                             id="login-btn"
                             type="button"
                             value="login"
-                            onClick={login}
+                            onClick={queryLogin}
                         />
                     </div>
                     <div className="but-box">
@@ -89,6 +112,10 @@ export default function LoginForm(props) {
                             id="register-btn"
                             type="button"
                             value="register"
+<<<<<<< Updated upstream
+=======
+                            onClick={queryRegister}
+>>>>>>> Stashed changes
                         />
                     </div>
                 </form>

@@ -1,3 +1,15 @@
+<<<<<<< Updated upstream
+=======
+/* #header {
+    background: url("../../../public/back.jpg") no-repeat;
+} */
+
+body {
+    /* background-image: url("../../../public/back.jpg"); */
+    background-size: 100%;
+}
+
+>>>>>>> Stashed changes
 .wrapper {
     margin: 0 auto;
     position: relative;

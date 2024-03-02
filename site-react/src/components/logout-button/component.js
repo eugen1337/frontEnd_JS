@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
-import GlobalContext from "../../GlobalContext.js";
+import GlobalContext from "../../contexts/GlobalContext.js";
 
-import Manager from "../../manager.js";
+import Manager from "../../transport/manager.js";
 import "./style.css";
 
 export default function LogoutButton(props) {

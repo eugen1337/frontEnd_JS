@@ -1,4 +1,4 @@
-import StateManager from "../../manager";
+import StateManager from "../../transport/manager";
 
 export default function Task(props) {
     const manager = new StateManager();

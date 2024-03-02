@@ -5,7 +5,7 @@ import React from "react";
 import LoginPage from "./pages/login-page/component";
 import TaskPage from "./pages/tasks-page/component";
 
-import GlobalContext from "./GlobalContext";
+import GlobalContext from "./contexts/GlobalContext";
 
 
 export default function App() {

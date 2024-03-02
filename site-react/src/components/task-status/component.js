@@ -1,5 +1,5 @@
 import "./style.css";
-import Manager from "../../manager.js";
+import Manager from "../../transport/manager.js";
 import { useEffect, useState } from "react";
 
 export default function TaskStatus(props) {

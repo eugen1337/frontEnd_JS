@@ -1,4 +1,4 @@
-import Manager from "../../manager.js";
+import Manager from "../../transport/manager.js";
 
 import { useState, useEffect } from "react";
 import Task from "../task/component.js";

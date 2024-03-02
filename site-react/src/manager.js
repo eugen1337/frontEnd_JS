@@ -85,8 +85,7 @@ export default class StateManager {
         const queryResult = await (
             await import("./api.js")
         )[methodName](params);
-        
-        console.log(queryResult);
+
         this.updateState(queryType, queryResult);
     }
 
@@ -158,13 +157,13 @@ export default class StateManager {
                 break;
             case "tasks":
                 if (newValue === "EMPTY") {
-                    this.states.tasks.list = "";
+                    this.states.tasks.list = [];
                     this.states.tasks.status = "EMPTY";
                 } else {
                     this.states.tasks.list = JSON.parse(newValue).docs;
                     this.states.tasks.status = "OK";
-                    emitState = "tasks";
                 }
+                emitState = "tasks";
                 break;
             case "calculation":
                 this.states.calculation = newValue;

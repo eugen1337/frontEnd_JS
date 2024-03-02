@@ -14,9 +14,11 @@ body {
     width: 100%;
     background: #cca3ff;
     padding: 34px;
-    border-radius: 6px;
+    border-radius: 10px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    border: 2px solid #b1cdff;
 }
+
 .wrapper h2 {
     position: relative;
     font-size: 22px;
@@ -32,31 +34,25 @@ body {
     margin: 18px 0;
 }
 form .input-box input {
+    font-family: sans-serif;
     height: 100%;
     width: 100%;
     outline: none;
     font-size: 17px;
     font-weight: 400;
     color: #333;
+    background-color: #d7f1ff;
     border: 1.5px solid #c7bebe;
     border-bottom-width: 2.5px;
     border-radius: 6px;
     transition: all 0.3s ease;
 }
+
 .input-box input:focus,
 .input-box input:valid {
-    border-color: #4070f4;
+    border-color: #000000;
 }
-form .policy {
-    display: flex;
-    align-items: center;
-}
-form h3 {
-    color: #707070;
-    font-size: 14px;
-    font-weight: 500;
-    margin-left: 10px;
-}
+
 .input-box.button input {
     color: #fff;
     letter-spacing: 1px;
@@ -64,16 +60,17 @@ form h3 {
     background: #4070f4;
     cursor: pointer;
 }
-.input-box.button input:hover {
-    background: #0e4bf1;
-}
-
 .but-box {
     text-align: center;
-    padding: 4px;
 }
 
-
-.login-btn input {
-    margin: 0px;
+.but-box input {
+    font-family: sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    height: 30px;
+    width: 70px;
+    border-color: #cca3ff;
+    border-radius: 10px;
+    background: #90c0db;
 }

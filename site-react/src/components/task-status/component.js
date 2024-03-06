@@ -1,39 +1,21 @@
 import "./style.css";
-import Manager from "../../transport/manager.js";
-import { useEffect, useState } from "react";
+import TasksPagecontext from "../../contexts/TasksPageContext";
+
+import { useContext, useState } from "react";
 
 export default function TaskStatus(props) {
-    const [status, setStatus] = useState({});
-    const manager = new Manager();
+    let { tasks } = useContext(TasksPagecontext);
 
-    const checkState = (stateName, state) => {
-        const statusTemp = {
-            count: state.list.length,
-            "not started": 0,
-            ready: 0,
-        };
-
-        switch (stateName) {
-            case "tasks":
-                state.list.forEach((task) => {
-                    const stat = task.status.toLowerCase();
-                    statusTemp[stat]++;
-                });
-                setStatus(statusTemp);
-                break;
-        }
-    };
-    const unsubscribe = () => {
-        manager.unsubscribe(checkState);
+    const status = {
+        count: tasks.length,
+        "not started": 0,
+        ready: 0,
     };
 
-    useEffect(() => {
-        const subscribe = async () => {
-            manager.subscribe("tasks", checkState, true);
-        };
-        subscribe();
-        return unsubscribe;
-    }, []);
+    tasks.forEach((task) => {
+        const stat = task.status.toLowerCase();
+        status[stat]++;
+    });
 
     return (
         <fieldset>

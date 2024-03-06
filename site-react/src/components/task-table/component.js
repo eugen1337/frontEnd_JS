@@ -1,60 +1,89 @@
-import Manager from "../../transport/manager.js";
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Task from "../task/component.js";
 
 import "./style.css";
 import TaskHeader from "../task-header/component.js";
+import TasksPagecontext from "../../contexts/TasksPageContext.js";
+import GlobalContext from "../../contexts/GlobalContext.js";
 
 export default function TaskTable(props) {
-    const [tasks, setTasks] = useState([]);
+    let { tasks, setTasks } = useContext(TasksPagecontext);
+    let { token, login } = useContext(GlobalContext);
 
-    const manager = new Manager();
+    const update = async () => {
+        const resTasks = await (
+            await import("../../transport/api.js")
+        ).getTasks({
+            token: token,
+        });
 
-    const handleUpdate = () => {
-        manager.query("tasks");
-    };
+        console.log(resTasks);
 
-    const handleAdd = () => {
-        const value1 = document.getElementById("value1").value;
-        const value2 = document.getElementById("value2").value;
-        manager.updateState("value1", value1);
-        manager.updateState("value2", value2);
-        manager.query("create");
-    };
-
-    const checkState = (stateName, state) => {
-        if (stateName === "tasks") {
-            const tasksList = state.list.map((val) => {
-                return <Task key={val.id} task={val} />;
-            });
-            setTasks(tasks.concat(tasksList));
+        if (resTasks) {
+            const taskArray = JSON.parse(resTasks).docs;
+            console.log(taskArray);
+            setTasks(taskArray);
+        } else {
+            console.log("tasks is null");
         }
     };
-    const unsubscribe = () => {
-        manager.unsubscribe(checkState);
+
+    const handleAdd = async () => {
+        const value1 = document.getElementById("value1").value;
+        const value2 = document.getElementById("value2").value;
+
+        const result = await (
+            await import("../../transport/api.js")
+        ).createTask({
+            token: token,
+            username: login,
+            value1: value1,
+            value2: value2,
+        });
+
+        if (!result) {
+            console.log("create error");
+        }
+
+        update();
     };
 
-    useEffect(() => {
-        const subscribe = async () => {
-            await manager.subscribe("tasks", checkState, true);
-        };
-        subscribe();
-        return unsubscribe;
-    }, []);
+    const tasksList = tasks.map((val) => {
+        return <Task key={val.id} task={val} updateTasks={update} />;
+    });
 
     return (
         <>
             <div>
-                <input className="task-create" type="button" value="Обновить" onClick={handleUpdate} />
-                <input className="task-create" type="button" value="Добавить" onClick={handleAdd} />
-                <input className="task-create" type="text" id="value1" placeholder="a" />
-                <input className="task-create" type="text" id="value2" placeholder="b" />
+                <input
+                    className="task-create"
+                    type="button"
+                    value="Обновить"
+                    onClick={update}
+                />
+                <input
+                    className="task-create"
+                    type="button"
+                    value="Добавить"
+                    onClick={handleAdd}
+                />
+                <input
+                    className="task-create"
+                    type="text"
+                    id="value1"
+                    placeholder="a"
+                />
+                <input
+                    className="task-create"
+                    type="text"
+                    id="value2"
+                    placeholder="b"
+                />
             </div>
             <table>
                 <tbody>
                     <TaskHeader />
-                    {tasks}
+                    {tasksList}
                 </tbody>
             </table>
         </>

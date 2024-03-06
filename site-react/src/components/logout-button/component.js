@@ -2,22 +2,15 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import GlobalContext from "../../contexts/GlobalContext.js";
-
-import Manager from "../../transport/manager.js";
 import "./style.css";
 
 export default function LogoutButton(props) {
     const navigate = useNavigate();
 
-    let { login, setLogin, setPassword } = useContext(GlobalContext);
-
-    const manager = new Manager();
+    let { login, setLogin } = useContext(GlobalContext);
 
     const handleClick = () => {
         setLogin("");
-        setPassword("");
-        manager.updateState("username", "");
-        manager.updateState("passwd", "");
         navigate("/");
     };
 

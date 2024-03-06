@@ -7,18 +7,17 @@ import TaskPage from "./pages/tasks-page/component";
 
 import GlobalContext from "./contexts/GlobalContext";
 
-
 export default function App() {
+    const [token, setToken] = useState("");
     const [login, setLogin] = useState("");
-    const [password, setPassword] = useState("");
 
     return (
         <GlobalContext.Provider
             value={{
-                login: login,
-                setLogin: setLogin,
-                password: password,
-                setPassword: setPassword,
+                login,
+                setLogin,
+                token,
+                setToken,
             }}
         >
             <Router>

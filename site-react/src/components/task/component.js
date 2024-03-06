@@ -1,7 +1,9 @@
+import { useContext } from "react";
 import StateManager from "../../transport/manager";
+import GlobalContext from "../../contexts/GlobalContext.js";
 
 export default function Task(props) {
-    const manager = new StateManager();
+    let { token } = useContext(GlobalContext);
 
     const keys = ["id", "value1", "value2", "result", "status"];
     const id = props.task["id"];
@@ -10,16 +12,36 @@ export default function Task(props) {
         return <td key={val}> {props.task[val]}</td>;
     });
 
-    const handleDelete = () => {
-        manager.updateState("id", id);
-        manager.query("delete");
+    const handleDelete = async () => {
+        const result = await (
+            await import("../../transport/api.js")
+        ).deleteTask({
+            token: token,
+            id: id,
+        });
+
+        if (!result) {
+            console.log("delete error");
+        }
+
+        props.updateTasks();
     };
 
-    const handleResult = () => {
-        manager.updateState("id", id);
-        manager.updateState("value1", props.task["value1"]);
-        manager.updateState("value2", props.task["value2"]);
-        manager.query("calculation");
+    const handleResult = async () => {
+        const result = await (
+            await import("../../transport/api.js")
+        ).calc({
+            token: token,
+            id: id,
+            value1: props.task["value1"],
+            value2: props.task["value2"],
+        });
+
+        if (!result) {
+            console.log("result error");
+        }
+
+        props.updateTasks();
     };
 
     const task_id = "task" + id;

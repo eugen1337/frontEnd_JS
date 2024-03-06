@@ -1,5 +1,8 @@
-import React from "react";
+import { createContext } from "react";
 
-const GlobalContext = React.createContext({});
-
-export default GlobalContext;
+export default createContext({
+    login: {},
+    setLogin: () => {},
+    token: {},
+    setToken: () => {},
+});

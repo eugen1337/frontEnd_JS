@@ -2,17 +2,14 @@ import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import GlobalContext from "../../contexts/GlobalContext.js";
-
-import Manager from "../../transport/manager.js";
+import LoginPageContext from "../../contexts/LoginPageContext.js";
 import "./style.css";
 
 export default function LoginForm(props) {
     const navigate = useNavigate();
 
-    let { login, setLogin } = useContext(GlobalContext);
-    let { password, setPassword } = useContext(GlobalContext);
-
-    const manager = new Manager();
+    let { login, setLogin, setToken } = useContext(GlobalContext);
+    let { password, setPassword } = useContext(LoginPageContext);
 
     const handleLogin = (event) => {
         setLogin(event.target.value);
@@ -21,22 +18,30 @@ export default function LoginForm(props) {
         setPassword(event.target.value);
     };
 
-    const queryLogin = () => {
-        manager.updateState("username", login);
-        manager.updateState("password", password);
-        manager.query("login");
+    const queryLogin = async () => {
+        const token = await (
+            await import("../../transport/api.js")
+        ).login({
+            username: login,
+            password: password,
+        });
 
-        if (manager.getState("logged")) {
+        if (token) {
+            setToken(token);
             navigate("/tasks");
+        } else {
+            console.log("login is null");
         }
     };
 
-    const queryRegister = () => {
-        manager.updateState("username", login);
-        manager.updateState("password", password);
-        manager.query("register");
-
-        if (manager.getState("logged")) {
+    const queryRegister = async () => {
+        const isLogged = await (
+            await import("../../transport/api.js")
+        ).register({
+            username: login,
+            password: password,
+        });
+        if (isLogged) {
             navigate("/tasks");
         }
     };

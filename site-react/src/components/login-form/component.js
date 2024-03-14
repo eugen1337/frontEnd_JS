@@ -1,21 +1,27 @@
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 
 import GlobalContext from "../../contexts/GlobalContext.js";
-import LoginPageContext from "../../contexts/LoginPageContext.js";
+import { ACTIONS_CREATORS } from "../../redux/actions.js";
 import "./style.css";
 
 export default function LoginForm(props) {
     const navigate = useNavigate();
 
     let { login, setLogin, setToken } = useContext(GlobalContext);
-    let { password, setPassword } = useContext(LoginPageContext);
+
+    let password = useSelector((state) => state.password);
+    const dispatch = useDispatch();
 
     const handleLogin = (event) => {
         setLogin(event.target.value);
     };
+
     const handlePassword = (event) => {
-        setPassword(event.target.value);
+        console.log(password);
+        const action = ACTIONS_CREATORS.UPDATE("password", event.target.value);
+        dispatch(action);
     };
 
     const queryLogin = async () => {
@@ -25,6 +31,9 @@ export default function LoginForm(props) {
             username: login,
             password: password,
         });
+
+        // const action = ACTIONS_CREATORS.GET_TOKEN("password", event.target.value);
+        // dispatch(action);
 
         if (token) {
             setToken(token);
@@ -45,6 +54,8 @@ export default function LoginForm(props) {
             navigate("/tasks");
         }
     };
+
+    password = "1ruewhgguio";
 
     return (
         <>

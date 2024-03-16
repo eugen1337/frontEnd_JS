@@ -1,55 +1,21 @@
-import { useState, useEffect, useContext } from "react";
 import Task from "../task/component.js";
 
 import "./style.css";
 import TaskHeader from "../task-header/component.js";
-import TasksPagecontext from "../../contexts/TasksPageContext.js";
-import GlobalContext from "../../contexts/GlobalContext.js";
+import {
+    useTasksUpdate,
+    useTasksAdd,
+    useTasksListener,
+} from "../../state/broker.js";
 
 export default function TaskTable(props) {
-    let { tasks, setTasks } = useContext(TasksPagecontext);
-    let { token, login } = useContext(GlobalContext);
+    const tasks = useTasksListener();
 
-    const update = async () => {
-        const resTasks = await (
-            await import("../../transport/api.js")
-        ).getTasks({
-            token: token,
-        });
-
-        console.log(resTasks);
-
-        if (resTasks) {
-            const taskArray = JSON.parse(resTasks).docs;
-            console.log(taskArray);
-            setTasks(taskArray);
-        } else {
-            console.log("tasks is null");
-        }
-    };
-
-    const handleAdd = async () => {
-        const value1 = document.getElementById("value1").value;
-        const value2 = document.getElementById("value2").value;
-
-        const result = await (
-            await import("../../transport/api.js")
-        ).createTask({
-            token: token,
-            username: login,
-            value1: value1,
-            value2: value2,
-        });
-
-        if (!result) {
-            console.log("create error");
-        }
-
-        update();
-    };
+    const tasksUpdate = useTasksUpdate();
+    const tasksAdd = useTasksAdd();
 
     const tasksList = tasks.map((val) => {
-        return <Task key={val.id} task={val} updateTasks={update} />;
+        return <Task key={val.id} task={val} updateTasks={tasksUpdate} />;
     });
 
     return (
@@ -59,13 +25,16 @@ export default function TaskTable(props) {
                     className="task-create"
                     type="button"
                     value="Обновить"
-                    onClick={update}
+                    onClick={async () => await tasksUpdate()}
                 />
                 <input
                     className="task-create"
                     type="button"
                     value="Добавить"
-                    onClick={handleAdd}
+                    onClick={async () => {
+                        await tasksAdd();
+                        await tasksUpdate();
+                    }}
                 />
                 <input
                     className="task-create"

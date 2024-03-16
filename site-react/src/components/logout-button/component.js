@@ -1,18 +1,20 @@
-import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-
-import GlobalContext from "../../contexts/GlobalContext.js";
+import {
+    useLoginDispatcher,
+    useLoginListener,
+    usePasswordDispatcher,
+    useTokenDispatcher,
+} from "../../state/broker";
 import "./style.css";
 
 export default function LogoutButton(props) {
     const navigate = useNavigate();
 
-    let { login, setLogin } = useContext(GlobalContext);
+    const login = useLoginListener();
 
-    const handleClick = () => {
-        setLogin("");
-        navigate("/");
-    };
+    const loginDispatch = useLoginDispatcher();
+    const passwordDispatch = usePasswordDispatcher();
+    const tokenDispatch = useTokenDispatcher();
 
     return (
         <>
@@ -22,7 +24,13 @@ export default function LogoutButton(props) {
                     id="back-but"
                     type="button"
                     value="Выйти"
-                    onClick={handleClick}
+                    onClick={() => {
+                        loginDispatch("");
+                        passwordDispatch("");
+                        tokenDispatch("");
+
+                        navigate("/");
+                    }}
                 />
             </div>
         </>

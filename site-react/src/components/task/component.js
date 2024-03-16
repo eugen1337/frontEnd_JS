@@ -1,9 +1,7 @@
-import { useContext } from "react";
-import StateManager from "../../transport/manager";
-import GlobalContext from "../../contexts/GlobalContext.js";
+import { useTokenListener } from "../../state/broker.js";
 
 export default function Task(props) {
-    let { token } = useContext(GlobalContext);
+    const token = useTokenListener();
 
     const keys = ["id", "value1", "value2", "result", "status"];
     const id = props.task["id"];

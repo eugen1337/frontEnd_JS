@@ -1,46 +1,32 @@
-import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-
-import GlobalContext from "../../contexts/GlobalContext.js";
-import { ACTIONS_CREATORS } from "../../redux/actions.js";
 import "./style.css";
+
+import {
+    useGetToken,
+    useLoginDispatcher,
+    useLoginListener,
+    usePasswordDispatcher,
+    usePasswordListener,
+    useTokenDispatcher,
+} from "../../state/broker.js";
 
 export default function LoginForm(props) {
     const navigate = useNavigate();
 
-    let { login, setLogin, setToken } = useContext(GlobalContext);
+    const login = useLoginListener();
+    const loginDispatch = useLoginDispatcher();
 
-    let password = useSelector((state) => state.password);
-    const dispatch = useDispatch();
+    const password = usePasswordListener();
+    const passwordDispatch = usePasswordDispatcher();
 
-    const handleLogin = (event) => {
-        setLogin(event.target.value);
-    };
-
-    const handlePassword = (event) => {
-        console.log(password);
-        const action = ACTIONS_CREATORS.UPDATE("password", event.target.value);
-        dispatch(action);
-    };
+    const getToken = useGetToken();
 
     const queryLogin = async () => {
-        const token = await (
-            await import("../../transport/api.js")
-        ).login({
-            username: login,
-            password: password,
-        });
+        const res = await getToken();
 
-        // const action = ACTIONS_CREATORS.GET_TOKEN("password", event.target.value);
-        // dispatch(action);
-
-        if (token) {
-            setToken(token);
+        if (res) {
             navigate("/tasks");
-        } else {
-            console.log("login is null");
-        }
+        } else console.log("token is null");
     };
 
     const queryRegister = async () => {
@@ -55,8 +41,6 @@ export default function LoginForm(props) {
         }
     };
 
-    password = "1ruewhgguio";
-
     return (
         <>
             <div className="wrapper">
@@ -68,7 +52,9 @@ export default function LoginForm(props) {
                             type="text"
                             placeholder="login"
                             value={login}
-                            onChange={handleLogin}
+                            onChange={(event) => {
+                                loginDispatch(event.target.value);
+                            }}
                             required
                         />
                     </div>
@@ -78,7 +64,9 @@ export default function LoginForm(props) {
                             type="password"
                             placeholder="password"
                             value={password}
-                            onChange={handlePassword}
+                            onChange={(event) => {
+                                passwordDispatch(event.target.value);
+                            }}
                             required
                         />
                     </div>

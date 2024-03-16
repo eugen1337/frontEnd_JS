@@ -1,10 +1,8 @@
+import { useTasksListener } from "../../state/broker";
 import "./style.css";
-import TasksPagecontext from "../../contexts/TasksPageContext";
-
-import { useContext, useState } from "react";
 
 export default function TaskStatus(props) {
-    let { tasks } = useContext(TasksPagecontext);
+    const tasks = useTasksListener();
 
     const status = {
         count: tasks.length,

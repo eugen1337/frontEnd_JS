@@ -4,6 +4,7 @@ import {
     useLoginListener,
     usePasswordDispatcher,
     useTokenDispatcher,
+    useTasksDispatcher,
 } from "../../state/broker";
 import "./style.css";
 
@@ -15,6 +16,7 @@ export default function LogoutButton(props) {
     const loginDispatch = useLoginDispatcher();
     const passwordDispatch = usePasswordDispatcher();
     const tokenDispatch = useTokenDispatcher();
+    const tasksDispatch = useTasksDispatcher();
 
     return (
         <>
@@ -28,6 +30,7 @@ export default function LogoutButton(props) {
                         loginDispatch("");
                         passwordDispatch("");
                         tokenDispatch("");
+                        tasksDispatch([]);
 
                         navigate("/");
                     }}

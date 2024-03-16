@@ -74,6 +74,11 @@ export function useGetToken() {
     return async () => await getToken();
 }
 
+export function useTasksDispatcher() {
+    const dispatch = useDispatch();
+    return (tasks) => dispatch(ACTIONS_CREATORS.UPDATE("tasks", tasks));
+}
+
 
 export function useTasksListener() {
     return useSelector((state) => state.tasks);
